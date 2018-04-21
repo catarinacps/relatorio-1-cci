@@ -7,7 +7,7 @@
 % Definição do tipo / classe de documento e estilo usado
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-\documentclass[rel_mlp]{iiufrgs}
+\documentclass{iiufrgs}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Importação de pacotes
@@ -22,6 +22,8 @@
 \usepackage{times}                  % pacote para usar fonte Adobe Times
 \usepackage{enumerate}              % para lista de itens com letras
 \usepackage{breakcites}
+\usepackage[oldvoltagedirection]{circuitikzgit}
+\usepackage{tikz}
 \usepackage{titlesec}
 \usepackage{enumitem}
 \usepackage{titletoc}               
@@ -29,7 +31,7 @@
 \usepackage{mathptmx}               % p/ usar fonte Adobe Times nas formulas matematicas
 \usepackage{url}                    % para formatar URLs
 %\usepackage{color}				    % para imagens e outras coisas coloridas
-%\usepackage{fixltx2e}              % para subscript
+\usepackage{fixltx2e}              % para subscript
 %\usepackage{amsmath}               % para \epsilon e matemática
 %\usepackage{amsfonts}
 %\usepackage{setspace}			    % para mudar espaçamento dos parágrafos
@@ -77,9 +79,7 @@
 
 % autor
 %\author{Autores(s)}{Aluno(s)} % {sobrenome}{nome}
-\author{Silva}{Henrique Correa Pereira da} % {sobrenome}{nome} 1 para cada aluno
-%\author{Niemiec}{Gabriel Stefaniak} % {sobrenome}{nome} 1 para cada aluno
-%\author{Jacintho}{Maria Clara Machry} % {sobrenome}{nome} 1 para cada aluno
+\author{Silva}{Henrique Corrêa Pereira da}
 
 % Professor orientador da disciplina
 \advisor[Prof.~Dr.]{Augusto Da Luz Reis}{Ricardo}
@@ -148,11 +148,77 @@
 
 \chapter{Introdução}\label{intro}
 
-Na Aula Prática 2, construimos o layout do inversor cujo esquemático foi concebido na última aula e o testamos utilizando as ferramentas do Vivado. Este relatório traz um resumo do processo e dos resultados obtidos ao seu fim.
+Neste relatório, construiremos laioutes e esquemáticos de quatro especificações de inversor utilizando diferentes tamanhos de transistor e compararemos sua performance utilizando as seguntes métricas:
 
-\chapter{Vivado}\label{vivado}
+\begin{enumerate}[leftmargin=3em, noitemsep] % [label={--}]
+    \setlength{\itemindent}{1em}
+    \item T\textsubscript{lh}: tempo de subida do sinal;
+    \item T\textsubscript{hl}: tempo de descida do sinal;
+    \item Tp\textsubscript{lh}: tempo de propagação \textit{low-high}; 
+    \item Tp\textsubscript{hl}: tempo de propagação \textit{high-low}; 
+    \item Tp\textsubscript{médio}: tempo de propagação médio; 
+    \item P\textsubscript{média}: potência média do circuito; 
+    \item P\textsubscript{RMS}: potência \textit{RMS} do circuito.
+\end{enumerate}
 
+Além disso, será feita a análise \textit{Layout versus Schematic} para cada inversor a fim de verificar a funcionalidade do leiaute contra o esquemático.
+\break
+\begin{figure}[htb]
+    \centering
+    \begin{circuitikz}
+        \draw (0, 0)
+        node[american not port] (not1) at (1.5, 2){}
+        node[american not port] (not2) at (3, 2) {}
+        node[american not port] (not3) at (4.5, 2){}
+        node[ground] {}
+        to[vsourcesquare, v=$3.3 V$] (0,2)
+        to (not1.in)
+        (not1.out) |- (not2.in)
+        (not2.out) |- (not3.in)
+        (not3.out) to (6, 2)
+        (6, 0) to[pC, l_=$50fF$] (6, 2) 
+        (6, 0) node[ground] {}
+        (not1) node[above] {}
+        (not2) node[below] {}
+        (not3) node[below] {}
+        ;
+        \node at (0, 4) {};
+        \node at (1.5, 3) {$INV_1$};
+        \node at (1.5, 1) {$Impl._1$};
+        \node at (3, 3) {$INV_2$};
+        \node at (4.5, 3) {$INV_1$};
+        \node at (4.5, 1) {$Impl._1$};
+    \end{circuitikz}
+    \caption{Circuito a ser projetado.}
+\end{figure}
 
+\chapter{Proposta}\label{proposta}
+A proposta do relatório é realizar um dimensionamento do INV\textsubscript{2} variando os valores de W\textsubscript{p} e de W\textsubscript{n} conforme a tabela \ref{tab:imp}.
+Além disso, o circuito também deverá seguir as seguintes especificações:
+
+\begin{itemize}[noitemsep]
+    \setlength{\itemindent}{1em}
+    \item[] VDD = $3.3 V$;
+    \item[] $1/f$ = $10ns$;
+    \item[] T\textsubscript{rise} = $200ps$;
+    \item[] T\textsubscript{fall} = $200ps$;
+    \item[] P\textsubscript{width} = $5ns$.
+\end{itemize}
+
+\begin{table}[ht]
+    \centering
+    \caption{Dimensões em cada implementação.}
+    \label{tab:imp}
+    \begin{tabular}{l|l|l}
+        Implementação
+        & W\textsubscript{p} 
+        & W\textsubscript{n} \\ \hline
+        $\#1$ & $1.5 um$ & $1.0 um$ \\ \hline
+        $\#2$ & $1.0 um$ & $1.0 um$ \\ \hline
+        $\#3$ & $10.5 um$ & $7.0 um$ \\ \hline
+        $\#4$ & $7.0 um$ & $10.5 um$ \\ \hline
+    \end{tabular}
+\end{table}
 
 \chapter{Visão Geral da Linguagem}\label{visao}
 
