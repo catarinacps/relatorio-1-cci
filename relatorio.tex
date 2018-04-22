@@ -22,8 +22,8 @@
 \usepackage{times}                  % pacote para usar fonte Adobe Times
 \usepackage{enumerate}              % para lista de itens com letras
 \usepackage{breakcites}
-\usepackage[oldvoltagedirection]{circuitikzgit}
 \usepackage{tikz}
+\usepackage[oldvoltagedirection]{circuitikzgit}
 \usepackage{titlesec}
 \usepackage{enumitem}
 \usepackage{titletoc}               
@@ -148,7 +148,9 @@
 
 \chapter{Introdução}\label{intro}
 
-Neste relatório, construiremos laioutes e esquemáticos de quatro especificações de inversor utilizando diferentes tamanhos de transistor e compararemos sua performance utilizando as seguntes métricas:
+Neste relatório, construiremos laioutes e esquemáticos de quatro especificações de inversor 
+utilizando diferentes tamanhos de transistor e compararemos sua performance utilizando as 
+seguintes métricas:
 
 \begin{enumerate}[leftmargin=3em, noitemsep] % [label={--}]
     \setlength{\itemindent}{1em}
@@ -161,10 +163,14 @@ Neste relatório, construiremos laioutes e esquemáticos de quatro especificaç�
     \item P\textsubscript{RMS}: potência \textit{RMS} do circuito.
 \end{enumerate}
 
-Além disso, será feita a análise \textit{Layout versus Schematic} para cada inversor a fim de verificar a funcionalidade do leiaute contra o esquemático.
-\break
+Além disso, será feita a análise \textit{Layout versus Schematic} para cada inversor a fim de 
+verificar a funcionalidade do leiaute contra o esquemático. Mais detalhes sobre a implementação 
+dos transistores e do circuito no Capítulo \ref{proposta}. \
+
 \begin{figure}[htb]
     \centering
+    \caption{Circuito a ser projetado.}
+    \label{fig:circuito}
     \begin{circuitikz}
         \draw (0, 0)
         node[american not port] (not1) at (1.5, 2){}
@@ -176,24 +182,20 @@ Além disso, será feita a análise \textit{Layout versus Schematic} para cada i
         (not1.out) |- (not2.in)
         (not2.out) |- (not3.in)
         (not3.out) to (6, 2)
-        (6, 0) to[pC, l_=$50fF$] (6, 2) 
+        (6, 0) to[pC, l_=$50fF$] (6, 2)
         (6, 0) node[ground] {}
-        (not1) node[above] {}
-        (not2) node[below] {}
-        (not3) node[below] {}
         ;
-        \node at (0, 4) {};
+        \node at (0, 3.5) {};
         \node at (1.5, 3) {$INV_1$};
         \node at (1.5, 1) {$Impl._1$};
         \node at (3, 3) {$INV_2$};
         \node at (4.5, 3) {$INV_1$};
         \node at (4.5, 1) {$Impl._1$};
     \end{circuitikz}
-    \caption{Circuito a ser projetado.}
 \end{figure}
 
 \chapter{Proposta}\label{proposta}
-A proposta do relatório é realizar um dimensionamento do INV\textsubscript{2} variando os valores de W\textsubscript{p} e de W\textsubscript{n} conforme a tabela \ref{tab:imp}.
+A proposta do relatório é realizar o redimensionamento do INV\textsubscript{2}, variando os valores de W\textsubscript{p} e de W\textsubscript{n} conforme a Tabela \ref{tab:imp}.
 Além disso, o circuito também deverá seguir as seguintes especificações:
 
 \begin{itemize}[noitemsep]
@@ -205,36 +207,61 @@ Além disso, o circuito também deverá seguir as seguintes especificações:
     \item[] P\textsubscript{width} = $5ns$.
 \end{itemize}
 
+Criados os novos leiautes, é obrigatório tanto o teste individual de cada um utilizando as ferramentas \textit{DRC} e \textit{LVS} quanto a extração das capacitâncias parasitas de cada implementação.
+Dado este passo completo, a última etapa consiste em criar um novo \textit{cellview} para cada versão do circuito da Figura \ref{fig:circuito}.
+
 \begin{table}[ht]
     \centering
     \caption{Dimensões em cada implementação.}
     \label{tab:imp}
-    \begin{tabular}{l|l|l}
+    \begin{tabular}{l c c}
+        \hline
         Implementação
-        & W\textsubscript{p} 
+        & W\textsubscript{p}
         & W\textsubscript{n} \\ \hline
-        $\#1$ & $1.5 um$ & $1.0 um$ \\ \hline
-        $\#2$ & $1.0 um$ & $1.0 um$ \\ \hline
-        $\#3$ & $10.5 um$ & $7.0 um$ \\ \hline
-        $\#4$ & $7.0 um$ & $10.5 um$ \\ \hline
+        $\#1$ & $1.5 um$     & $1.0 um$     \\ 
+        $\#2$ & $1.0 um$     & $1.0 um$     \\ 
+        $\#3$ & $10.5 um$    & $7.0 um$     \\ 
+        $\#4$ & $7.0 um$     & $10.5 um$    \\ \hline
     \end{tabular}
 \end{table}
 
-\chapter{Visão Geral da Linguagem}\label{visao}
+\chapter{Análise}\label{analise}
+Neste capítulo abordaremos cada implementação do inversor e, no Capítulo \ref{resultados} analisaremos os resultados e faremos algumas observações sobre o circuito simulado.
 
-\chapter{Recursos}\label{recursos} %NÃO FAZER AINDA
+\section{Inversores}
+A Figura \ref{fig:inversor} mostra o esquemático do inversor estático \textit{CMOS} que implementaremos. Quando o V\textsubscript{in} é alto e igual à V\textsubscript{DD}, o transistor NMOS está ativo, enquanto o PMOS está desativado. Isso garante que, para qualquer dado momento em condições operacionais, não exista um caminho direto da fonte para o dreno. Essa ausência de fluxo de corrente define que a porta lógica não gaste energia passivamente (tirando vazamentos). \
 
-%Receamos que a listagem dos recursos utilizados só será possível quando o projeto estiver em um estágio mais avançado. Por enquanto, nos abstemos de quaisquer observações impetuosas.
+A observação anterior, embora pareça óbvia, é de crucial importância, pois, quando portas lógicas eram implementadas usando tecnologia NMOS pura, inversores tinham corrente estática não trivial, o que resultava num limite máximo de portas que podiam ser implementadas num só \textit{die} \cite{Rabaey:1996:DIC:227375}.\
 
-\chapter{Análise crítica}\label{analise} %NÃO FAZER AINDA
+\begin{figure}[htb]
+    \centering
+    \caption{Esquemático de um inversor CMOS.}
+    \label{fig:inversor}
+    \begin{circuitikz}
+        \node [pmos] (pmos) at (2, 3) {};
+        \node [nmos] (nmos) at (2, 1) {};
+        \draw (pmos.S) to[short, -*] node[above] {$V_{DD}$} ++(0, 0.5);
+        \draw (pmos.D) -- (nmos.D) node[midway] (middleout) {};
+        \path (middleout) -- ++(2, 0) node[midway] (cap) {};
+        \path (middleout) -- ++(2, 0) node[right] {$V_{out}$};
+        \draw (middleout) to[short, -*] ++(2, 0);
+        \draw (cap) to[C=$C_L$] ++(0, -1) node[ground] {};
+        \draw (pmos.G) -- (nmos.G) node[midway] (middlein) {};
+        \draw (middlein) to[short, -*] ++(-1, 0) node[left] {$V_{in}$};
+        \node [ground] at (nmos.S) {};
+        \node at (0, 5) {};
+    \end{circuitikz}
+\end{figure}
 
-%Neste estágio do projeto, ainda estamos estudando a linguagem e planejando os outros detalhes da implementação, então a análise completa da linguagem será postergada para outro momento.
+\subsection{Implementação 1}\label{impl1}
 
-\chapter{Conclusão}\label{conclusao} %NUNCA FAZER
 
-%Não concluímos nada. Afinal, isso é só o projeto \textbf{inicial}.
 
-%Relaciona as principais divisões e seções do texto, na mesma ordem em que nele se sucedem, indicando, ainda, as respectivas páginas iniciais. O sumário deverá ser localizado imediatamente após as folhas de rosto, catalogação na publicação, dedicatórias e agradecimentos. Para maiores detalhes, ver a norma NBR-6027 da ABNT (1989b). 
+\section{Circuito}
+Teste.
+
+\chapter{Resultados}\label{resultados} %NÃO FAZER AINDA
 
 %\paragrafo
 
