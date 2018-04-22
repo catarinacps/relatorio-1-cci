@@ -172,19 +172,19 @@ dos transistores e do circuito no Capítulo \ref{proposta}. \
     \caption{Circuito a ser projetado.}
     \label{fig:circuito}
     \begin{circuitikz}
-        \draw (0, 0)
-        node[american not port] (not1) at (1.5, 2){}
-        node[american not port] (not2) at (3, 2) {}
-        node[american not port] (not3) at (4.5, 2){}
-        node[ground] {}
-        to[vsourcesquare, v=$3.3 V$] (0,2)
-        to (not1.in)
-        (not1.out) |- (not2.in)
-        (not2.out) |- (not3.in)
-        (not3.out) to (6, 2)
-        (6, 0) to[pC, l_=$50fF$] (6, 2)
-        (6, 0) node[ground] {}
-        ;
+        \node (source) at (0, 2) {};
+        \node [ground] (gnd1) at (0, 0) {};
+        \node [ground] (gnd2) at (6, 0) {};
+        \node [american not port] (not1) at (1.5, 2) {};
+        \node [american not port] (not2) at (3, 2) {};
+        \node [american not port] (not3) at (4.5, 2) {};
+        \node (out) at (6, 2) {};
+        \draw (gnd1) to[vsourcesquare, v=$3.3 V$] (source);
+        \draw (source) to[short] (not1.in);
+        \draw (not1.out) |- (not2.in);
+        \draw (not2.out) |- (not3.in);
+        \draw (not3.out) to[short] (out);
+        \draw (gnd2) to[pC, l_=$50fF$] (out);
         \node at (0, 3.5) {};
         \node at (1.5, 3) {$INV_1$};
         \node at (1.5, 1) {$Impl._1$};
@@ -230,7 +230,7 @@ Dado este passo completo, a última etapa consiste em criar um novo \textit{cell
 Neste capítulo abordaremos cada implementação do inversor e, no Capítulo \ref{resultados} analisaremos os resultados e faremos algumas observações sobre o circuito simulado.
 
 \section{Inversores}
-A Figura \ref{fig:inversor} mostra o esquemático do inversor estático \textit{CMOS} que implementaremos. Quando o V\textsubscript{in} é alto e igual à V\textsubscript{DD}, o transistor NMOS está ativo, enquanto o PMOS está desativado. Isso garante que, para qualquer dado momento em condições operacionais, não exista um caminho direto da fonte para o dreno. Essa ausência de fluxo de corrente define que a porta lógica não gaste energia passivamente (tirando vazamentos). \
+A Figura \ref{fig:inversor} mostra o esquemático do inversor estático CMOS que implementaremos. Quando o V\textsubscript{in} é alto e igual à V\textsubscript{DD}, o transistor NMOS está ativo, enquanto o PMOS está desativado. Isso garante que, para qualquer dado momento em condições operacionais, não exista um caminho direto da fonte para o dreno. Essa ausência de fluxo de corrente define que a porta lógica não gaste energia passivamente (excluídos vazamentos). \
 
 A observação anterior, embora pareça óbvia, é de crucial importância, pois, quando portas lógicas eram implementadas usando tecnologia NMOS pura, inversores tinham corrente estática não trivial, o que resultava num limite máximo de portas que podiam ser implementadas num só \textit{die} \cite{Rabaey:1996:DIC:227375}.\
 
@@ -251,6 +251,38 @@ A observação anterior, embora pareça óbvia, é de crucial importância, pois
         \draw (middlein) to[short, -*] ++(-1, 0) node[left] {$V_{in}$};
         \node [ground] at (nmos.S) {};
         \node at (0, 5) {};
+    \end{circuitikz}
+\end{figure}
+
+\begin{figure}[htb]
+    \centering
+    \caption{Diagrama simplificado do leaiute de um inversor CMOS.}
+    \label{fig:leiaute}
+    \begin{circuitikz}
+        \node (in) at (0, 3) {};
+        \node (source) at (1, 6) {};
+        \node (gnd) at (1, 0) {};
+        \node at (0, 6.5) {};
+        \draw [ultra thick, blue] (gnd) to[short, *-] ++(2, 0);
+        \draw [ultra thick, blue] (gnd) to[short] ++(-1, 0);
+        \draw [ultra thick, blue] (source) to[short, *-] ++(2, 0);
+        \draw [ultra thick, blue] (source) to[short] ++(-1, 0);
+        \draw [ultra thick, red] (in) to[short] ++(1.5, 0) node (poly) {};
+        \draw [ultra thick, blue] (gnd) to[short] ++(0, 1.5) node (nmos) {};
+        \draw [ultra thick, blue] (source) to[short] ++(0, -1.5) node (pmos) {};
+        \draw [ultra thick, yellow] (pmos) to[short, -*] ++(1, 0) node (e_pmos) {};
+        \draw [ultra thick, green] (nmos) to[short, -*] ++(1, 0) node (e_nmos) {};
+        \draw [ultra thick, blue] (e_nmos) to[short] (e_pmos);
+        \path (e_nmos) -- (e_pmos) node[midway] (out) {};
+        \draw [ultra thick, blue] (out) to[short, -*] ++(1, 0) node (vout) {};
+        \draw [ultra thick, red] (poly) to[short] ++(0, 2);
+        \draw [ultra thick, red] (poly) to[short] ++(0, -2);
+        \draw [ultra thick] (in) to[short, -*] ++(0, 0) node [left] {$V_{in}$};
+        \node [above] at (source) {$V_{DD}$};
+        \node [below] at (gnd) {$GND$};
+        \node [right] at (vout) {$V_{out}$};
+        \draw [ultra thick] (pmos) to[short, -*] ++(0, 0);
+        \draw [ultra thick] (nmos) to[short, -*] ++(0, 0);
     \end{circuitikz}
 \end{figure}
 
