@@ -24,6 +24,7 @@
 \usepackage{breakcites}
 \usepackage{tikz}
 \usepackage[oldvoltagedirection]{circuitikzgit}
+\usepackage{siunitx}
 \usepackage{titlesec}
 \usepackage{enumitem}
 \usepackage{titletoc}               
@@ -66,6 +67,12 @@
 % adiciona a fonte em figuras e tabelas
 \newcommand{\fonte}[1]{\\Fonte: {#1}}
 
+\newcommand{\virtuoso}{\textit{Virtuoso}}
+
+\newcommand{\titlepagespecificinfo} {Relatório apresentado como requisito parcial para a obtenção de conceito na Disciplina de Concepção de Circuitos Integrados}
+% \def\@cipspecificinfo{Concepção de Circuitos Integrados}
+
+
 % Ative o seguinte caso alguma nota de rodapé fique muito longa e quebre entre múltiplas
 % páginas
 %\interfootnotelinepenalty=10000
@@ -75,7 +82,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % título
-\title{RELATÓRIO DA AULA PRÁTICA 2} 
+\title{RELATÓRIO 1} 
 
 % autor
 %\author{Autores(s)}{Aluno(s)} % {sobrenome}{nome}
@@ -85,7 +92,7 @@
 \advisor[Prof.~Dr.]{Augusto Da Luz Reis}{Ricardo}
 
 % Nome do(s) curso(s):
-\course{Curso de Graduação em Ciência da Computa{\c{c}}{\~a}o}
+\course{Curso de Graduação em Ciência da Computação}
 
 % local da realização do trabalho 
 \location{Porto Alegre}{RS} 
@@ -96,8 +103,9 @@
 
 % Palavras chave
 \keyword{CCI}
-\keyword{Vivado}
+\keyword{Virtuoso}
 \keyword{Inversor}
+\keyword{Relatório}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -200,11 +208,11 @@ Além disso, o circuito também deverá seguir as seguintes especificações:
 
 \begin{itemize}[noitemsep]
     \setlength{\itemindent}{1em}
-    \item[] VDD = $3.3 V$;
-    \item[] $1/f$ = $10ns$;
-    \item[] T\textsubscript{rise} = $200ps$;
-    \item[] T\textsubscript{fall} = $200ps$;
-    \item[] P\textsubscript{width} = $5ns$.
+    \item VDD = \SI{3.3}{\V};
+    \item $1/f$ = \SI{10}{\ns};
+    \item T\textsubscript{rise} = \SI{200}{\ps};
+    \item T\textsubscript{fall} = \SI{200}{\ps};
+    \item P\textsubscript{width} = \SI{5}{\ns}.
 \end{itemize}
 
 Criados os novos leiautes, é obrigatório tanto o teste individual de cada um utilizando as ferramentas \textit{DRC} e \textit{LVS} quanto a extração das capacitâncias parasitas de cada implementação.
@@ -219,10 +227,10 @@ Dado este passo completo, a última etapa consiste em criar um novo \textit{cell
         Implementação
         & W\textsubscript{p}
         & W\textsubscript{n} \\ \hline
-        $\#1$ & $1.5 um$     & $1.0 um$     \\ 
-        $\#2$ & $1.0 um$     & $1.0 um$     \\ 
-        $\#3$ & $10.5 um$    & $7.0 um$     \\ 
-        $\#4$ & $7.0 um$     & $10.5 um$    \\ \hline
+        \#1 & \SI{1.5}{\um}     & \SI{1.0}{\um}     \\ 
+        \#2 & \SI{1.0}{\um}     & \SI{1.0}{\um}     \\ 
+        \#3 & \SI{10.5}{\um}    & \SI{7.0}{\um}     \\ 
+        \#4 & \SI{7.0}{\um}     & \SI{10.5}{\um}    \\ \hline
     \end{tabular}
 \end{table}
 
@@ -230,9 +238,11 @@ Dado este passo completo, a última etapa consiste em criar um novo \textit{cell
 Neste capítulo abordaremos cada implementação do inversor e, no Capítulo \ref{resultados} analisaremos os resultados e faremos algumas observações sobre o circuito simulado.
 
 \section{Inversores}
-A Figura \ref{fig:inversor} mostra o esquemático do inversor estático CMOS que implementaremos. Quando o V\textsubscript{in} é alto e igual à V\textsubscript{DD}, o transistor NMOS está ativo, enquanto o PMOS está desativado. Isso garante que, para qualquer dado momento em condições operacionais, não exista um caminho direto da fonte para o dreno. Essa ausência de fluxo de corrente define que a porta lógica não gaste energia passivamente (excluídos vazamentos). \
+A Figura \ref{fig:inversor} mostra o esquemático do inversor estático CMOS que implementaremos. Quando o V\textsubscript{in} é alto e igual à V\textsubscript{DD}, o transistor NMOS está ativo, enquanto o PMOS está desativado.\
 
-A observação anterior, embora pareça óbvia, é de crucial importância, pois, quando portas lógicas eram implementadas usando tecnologia NMOS pura, inversores tinham corrente estática não trivial, o que resultava num limite máximo de portas que podiam ser implementadas num só \textit{die} \cite{Rabaey:1996:DIC:227375}.\
+Isso garante que, para qualquer dado momento em condições operacionais, não exista um caminho direto da fonte para o dreno. Essa ausência de fluxo de corrente define que a porta lógica não gaste energia passivamente \footnote{salvo possíveis vazamentos.}.\
+
+A observação anterior, embora pareça óbvia, é de crucial importância, pois, utilizando uma implementação com tecnologia NMOS pura, a rede pull-up tem potência estática não trivial, o que resulta num limite máximo de portas que podem ser implementadas num só \textit{die} \cite{Rabaey1996Circuits}.\
 
 \begin{figure}[htb]
     \centering
@@ -254,18 +264,20 @@ A observação anterior, embora pareça óbvia, é de crucial importância, pois
     \end{circuitikz}
 \end{figure}
 
+No \textit{stick diagram} da Figura \ref{fig:leiautestick}, podemos observar um diagrama simplificado do leiaute do inversor que será implementado.
+
 \begin{figure}[htb]
     \centering
     \caption{Diagrama simplificado do leaiute de um inversor CMOS.}
-    \label{fig:leiaute}
+    \label{fig:leiautestick}
     \begin{circuitikz}
         \node (in) at (0, 3) {};
         \node (source) at (1, 6) {};
         \node (gnd) at (1, 0) {};
         \node at (0, 6.5) {};
-        \draw [ultra thick, blue] (gnd) to[short, *-] ++(2, 0);
+        \draw [ultra thick, blue] (gnd) to[short] ++(2, 0);
         \draw [ultra thick, blue] (gnd) to[short] ++(-1, 0);
-        \draw [ultra thick, blue] (source) to[short, *-] ++(2, 0);
+        \draw [ultra thick, blue] (source) to[short] ++(2, 0);
         \draw [ultra thick, blue] (source) to[short] ++(-1, 0);
         \draw [ultra thick, red] (in) to[short] ++(1.5, 0) node (poly) {};
         \draw [ultra thick, blue] (gnd) to[short] ++(0, 1.5) node (nmos) {};
@@ -283,12 +295,42 @@ A observação anterior, embora pareça óbvia, é de crucial importância, pois
         \node [right] at (vout) {$V_{out}$};
         \draw [ultra thick] (pmos) to[short, -*] ++(0, 0);
         \draw [ultra thick] (nmos) to[short, -*] ++(0, 0);
+        \draw [ultra thick] (gnd) to[short, -*] ++(0, 0);
+        \draw [ultra thick] (source) to[short, -*] ++(0, 0);
     \end{circuitikz}
 \end{figure}
 
 \subsection{Implementação 1}\label{impl1}
 
+A Implementação 1, como vista anteriormente na Aula Prática 2, possui transistores PMOS e NMOS dimensionados respectivamente em \SI{1.5}{\um} e \SI{1.0}{\um}, e, assim como na aula prática, as células projetadas tem \SI{14}{\um} de altura num processo CMOS de substrato P\textsuperscript{-}.
 
+A Figura \ref{fig:esquematico1} mostra o esquemático da porta lógica na ferramenta \virtuoso, e a Figura \ref{fig:leiaute1} mostra o seu respectivo leiaute. O leiaute foi feito manualmente, sem utilizar as ferramentas de automação e de simplificação do processo de criação de leiaute do \virtuoso.
+
+\begin{figure}[htbp]
+    \centering
+    \caption{Esquemático da Implementação 1}
+    \includegraphics[scale=0.8]{images/esquematico1.png}
+
+    \label{fig:esquematico1}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \caption{Leiaute da Implementação 1}
+    \includegraphics[scale=0.8]{images/layout1.png}
+
+    \label{fig:leiaute1}
+\end{figure}
+
+A Figura \ref{fig:LVS1} mostra o resultado da verificação \textit{Layout Versus Schematic} do leiaute da Figura \ref{fig:leiaute1}. Embora citadas agora, figuras de resultados de etapas de verificação não estarão presentes nas próximas seções por motivos de clareza do documento.
+
+\begin{figure}[htbp]
+    \centering
+    \caption{LVS da implementação 1}
+    \includegraphics[scale=0.8]{images/LVS_2.png}
+
+    \label{fig:LVS1}
+\end{figure}
 
 \section{Circuito}
 Teste.
