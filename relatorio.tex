@@ -3,6 +3,8 @@
 % classe latex iiufrgs disponivel em http://github.com/schnorr/iiufrgs
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% Ignore o comentario acima e imagine que exista um modelo de relatorio de CCI em algum lugar
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Definição do tipo / classe de documento e estilo usado
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -24,12 +26,13 @@
 \usepackage{breakcites}
 \usepackage{tikz}
 \usepackage[oldvoltagedirection]{circuitikzgit}
+\usepackage{caption}
 \usepackage{siunitx}
 \usepackage{placeins}
 \usepackage{titlesec}
 \usepackage{enumitem}
 \usepackage{titletoc}               
-\usepackage{listings}			    % para listagens de código-fonte
+%\usepackage{listings}			    % para listagens de código-fonte
 \usepackage{mathptmx}               % p/ usar fonte Adobe Times nas formulas matematicas
 \usepackage{url}                    % para formatar URLs
 %\usepackage{color}				    % para imagens e outras coisas coloridas
@@ -41,7 +44,7 @@
 %\usepackage{longtable}             % para tabelas compridas (mais de uma página)
 %\usepackage{float}
 %\usepackage{booktabs}
-%\usepackage{tabularx}
+\usepackage{tabularx}
 %\usepackage{hyperref}
 
 \usepackage[alf,abnt-emphasize=bf]{abntex2cite}	% pacote para usar citações abnt
@@ -70,7 +73,7 @@
 
 \newcommand{\virtuoso}{\textit{Virtuoso}}
 
-\newcommand{\titlepagespecificinfo} {Relatório apresentado como requisito parcial para a obtenção de conceito na Disciplina de Concepção de Circuitos Integrados}
+\newcommand{\titlepagespecificinfo}{Relatório apresentado como requisito parcial para a obtenção de conceito na Disciplina de Concepção de Circuitos Integrados.}
 % \def\@cipspecificinfo{Concepção de Circuitos Integrados}
 
 
@@ -157,7 +160,7 @@
 
 \chapter{Introdução}\label{intro}
 
-Neste relatório, construiremos laioutes e esquemáticos de quatro especificações de inversor 
+Neste relatório, construiremos leiautes e esquemáticos de quatro especificações de inversor 
 utilizando diferentes tamanhos de transistor e compararemos sua performance utilizando as 
 seguintes métricas:
 
@@ -369,7 +372,7 @@ A Figura \ref{fig:esquematico3} mostra o esquemático da porta lógica na ferram
 \begin{figure}[htbp]
     \centering
     \caption{Leiaute da Implementação 3}
-    \includegraphics[scale=0.8]{images/layout3.png}
+    \includegraphics[scale=0.7]{images/layout3.png}
     \label{fig:leiaute3}
 \end{figure}
 
@@ -399,7 +402,7 @@ A Figura \ref{fig:esquematico4} mostra o esquemático da porta lógica na ferram
 \section{Circuito}
 O circuito para testes, representado na Figura \ref{fig:circuito}, consiste de 3 inversores em série, sendo que o primeiro e o último possuem dimensões W\textsubscript{p} e W\textsubscript{n} iguais. Além disso, podemos observar um sinal de entrada representado por uma fonte variável em pulsos na entrada e um capacitor polar de \SI{50.0}{\fF} após a saída do último inversor.\
 
-Usaremos para a análise do circuito a entrada e a saída do segundo inversor\footnote{que será alterado em cada versão do circuito}.
+Usaremos para a análise do circuito a entrada e a saída do segundo inversor\footnote{que será alterado em cada versão do circuito.}. Todas as simulações foram feitas utilizando a visão \textit{av\_extracted}\footnote{obtidas pela extração das capacitâncias parasitas de cada implementação.} dos inversores e definindo \SI{20}{\ns} como duração da simulação.
 
 \subsection{Cadeia 1}
 A Cadeia 1 de inversores utiliza a \nameref{impl1} como a implementação do segundo inversor. Os resultados da análise transiente desse circuito está no Capítulo \ref{resultados}.\
@@ -485,8 +488,124 @@ A Figura \ref{fig:circ_e4} mostra o esquemático do circuito na ferramenta \virt
 
 \FloatBarrier
 
-\chapter{Resultados}\label{resultados} %NÃO FAZER AINDA
-A.
+\chapter{Resultados}\label{resultados}
+Neste capítulo abordaremos os resultados obtidos nas simulações e discutiremos possíveis causas e consequências das escolhas de dimensionamento de cada inversor.
+
+\section{Tabela}\label{tabela}
+A Tabela \ref{tab:tempo} define os valores encontrados para cada uma das métricas temporais definidas no Capítulo \nameref{intro} para cada cadeia de inversores testada, e a Tabela \ref{tab:potencia} define as métricas de energia para as mesmas ditas cadeias.
+
+% \begin{table}[ht]
+%     \centering
+%     \caption{Resultados temporais das simulações.}
+%     \small
+%     \label{tab:valores}
+%     \sisetup{scientific-notation = true, round-mode = places, round-precision = 3}
+%     \begin{tabular}{l l l l l}
+%         \hline
+%         Métrica
+%         & Cadeia 1 & Cadeia 2 & Cadeia 3 & Cadeia 4 \\ \hline\hline
+%         Tp\textsubscript{HL}
+%         & \SI{0.047885}{\ns}    & \SI{0.057099}{\ns}    & \SI{0.029992}{\ns}    & \SI{0.030197}{\ns}    \\
+%         Tp\textsubscript{LH}
+%         & \SI{0.06286}{\ns}     & \SI{0.11039}{\ns}     & \SI{0.07927}{\ns}     & \SI{0.11065}{\ns}     \\
+%         Tp\textsubscript{médio}
+%         & \SI{0.0553725}{\ns}   & \SI{0.0837445}{\ns}   & \SI{0.054631}{\ns}    & \SI{0.0704235}{\ns}   \\
+%         T\textsubscript{LH}
+%         & \SI{0.1072}{\ns}      & \SI{0.19525}{\ns}     & \SI{0.10855}{\ns}     & \SI{0.11948}{\ns}     \\
+%         T\textsubscript{HL}
+%         & \SI{0.066955}{\ns}    & \SI{0.086447}{\ns}    & \SI{0.129788}{\ns}    & \SI{0.111712}{\ns}    \\
+%         P\textsubscript{média}
+%         & \SI{9.57e-6}{\W}      & \SI{11.85e-6}{\W}     & \SI{73.66e-6}{\W}     & \SI{68.89e-6}{\W}     \\
+%         P\textsubscript{RMS}
+%         & \SI{68.14e-6}{\W}     & \SI{62.22e-6}{\W}     & \SI{381.5e-6}{\W}     & \SI{343.2e-6}{\W}     \\
+%         \hline
+%     \end{tabular}
+% \end{table}
+
+\begin{table}[ht]
+    \centering
+    \caption{Resultados temporais das simulações.}
+    \small
+    \label{tab:tempo}
+    \sisetup{scientific-notation = true, round-mode = places, round-precision = 3}
+    \begin{tabular}{l l l l l l}
+        \hline
+        Cadeia
+        & Tp\textsubscript{HL}
+        & Tp\textsubscript{LH}
+        & Tp\textsubscript{médio}
+        & T\textsubscript{LH}
+        & T\textsubscript{HL} \\ \hline
+        \# 1
+        & \SI{0.047885}{\ns} & \SI{0.06286}{\ns} & \SI{0.0553725}{\ns} & \SI{0.1072}{\ns}
+        & \SI{0.066955}{\ns} \\
+        \# 2
+        & \SI{0.057099}{\ns} & \SI{0.11039}{\ns} & \SI{0.0837445}{\ns} & \SI{0.19525}{\ns}
+        & \SI{0.086447}{\ns} \\
+        \# 3
+        & \SI{0.029992}{\ns} & \SI{0.07927}{\ns} & \SI{0.054631}{\ns} & \SI{0.10855}{\ns}
+        & \SI{0.129788}{\ns} \\
+        \# 4
+        & \SI{0.030197}{\ns} & \SI{0.11065}{\ns} & \SI{0.0704235}{\ns} & \SI{0.11948}{\ns}
+        & \SI{0.111712}{\ns} \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\begin{table}[ht]
+    \centering
+    \caption{Resultados de consumo de potência.}
+    \small
+    \label{tab:potencia}
+    \sisetup{scientific-notation = true, round-mode = places, round-precision = 3}
+    \begin{tabular}{l l l}
+        \hline
+        $\cdots$
+        & P\textsubscript{média}
+        & P\textsubscript{RMS} \\ \hline
+        \# 1
+        & \SI{9.57e-6}{\W}  & \SI{68.14e-6}{\W} \\
+        \# 2
+        & \SI{11.85e-6}{\W} & \SI{62.22e-6}{\W} \\
+        \# 3
+        & \SI{73.66e-6}{\W} & \SI{381.5e-6}{\W} \\
+        \# 4
+        & \SI{68.89e-6}{\W} & \SI{343.2e-6}{\W} \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\section{Discussão}\label{discussao}
+Como análise retrospectiva, discutiremos os motivos de alguns dos resultados observados na Seção \ref{tabela}.
+
+\subsection{Tempo de propagação}\label{tprop}
+Como foi possível observar nos resultados das análises transiente dos diferentes dimensionamentos dos transistores NMOS e PMOS, pudemos notar que o tempo de propagação é inversamente proporcional à largura dos transistores.
+
+A afirmação anterior, embora correta, esconde parte dos fatores em jogo ao redimensionar a largura de um transistor. Por exemplo, ao aumentar a largura do transistor PMOS a fim de contabilizar a lentidão do deslocamento de lacunas em relação ao deslocamento de eletrons, estamos, na verdade, diminuindo a resistência do transistor PMOS. Porém, ao fazer isso, também estamos aumentando de maneira diretamente proporcional a capacitância C\textsubscript{L} equivalente do circuito\footnote{causada pelo aumento físico das estruturas de difusão.}, o que afeta negativamente o tempo de propagação \cite{Rabaey1996Circuits}. Como nosso objetivo é diminuir o tempo de propagação, temos que encontrar uma relação ideal entre a resistência do transistor e a capacitância do circuito.
+
+\subsection{Transições da Implementação 2}\label{timpl2}
+Pela análise dos resultados obtidos para a segunda versão do circuito, que utiliza a \nameref{impl2}, foi possível observar que a transição mais rápida foi a de descida, ou seja, T\textsubscript{HL}.
+
+Isso é consequência da característica elétrica inerente à transistores PMOS, que já foi citada brevemente na Seção \nameref{tprop}, que é o fato de lacunas se deslocarem mais lentamente que elétrons. Podemos mitigar essa dessincronia redimensionando o transistor PMOS para que esse seja cerca de 3 vezes maior que o NMOS.
+
+\subsection{Dimensionamento e potência}\label{dimpot}
+Também durante a análise dos resultados obtidos, foi possível observar que a potência nas versões do circuito que utilizavam as Implementações 3 e 4 cresceu uma ordem de magnetude em relação às versões que utilizavam Implementações menores.
+
+Isso se deve ao mesmo fato discutido na Seção \nameref{tprop}, que é a relação entre dimensionamento de um transistor e sua resistência. Ao aumentar o dimensionamento, a resistência do transistor diminui e, por consequência, a corrente que passa pelo transistor aumenta. Com mais corrente passando pelo transistor numa mesma diferença de potêncial, temos $P = V*I$, e, assim, maior dissipação de potência pelo transistor.
+
+Além disso, temos que o aumento dos transistores NMOS ou PMOS aumentam, por consequência, a capacitância de saída do inversor (representada na Figura \ref{fig:inversor} por C\textsubscript{L}\footnote{lembrando que esta é uma almálgama de todas as capacitâncias presentes na porta.}). Este aumento da capacitância leva a um aumento direto da energia tomada de V\textsubscript{DD} para carregar C\textsubscript{L}, onde, então, é dissipada ou guardada. A energia guardada é mais tarde dissipada no transistor NMOS durante a transição \textit{high-low}.
+
+\subsection{Componentes do consumo de potência}\label{comppot}
+Temos, como componentes do consumo de potência numa tecnologia CMOS, os seguintes itens:
+
+\begin{itemize}[noitemsep]
+    \setlength{\itemindent}{1em}
+    \item \textbf{Resistências parasitas}: resistências não projetadas na fonte e no dreno causadas pela distância até a grade;
+    \item \textbf{Dissipação dinâmica na capacitância de saída}: nas transições \textit{high-low} e \textit{low-high}, o capacitor ou é carregado pela rede \textit{pull-up} (dissipando e guardando energia) ou descarrega sua energia armazenada na rede \textit{pull-down}, definindo, assim, um gasto de energia de $C_L*V_{DD}^2$ por ciclo de transição;
+    \item \textbf{Latchup}: transistores parasitas causados pelas diferentes difusões num circuito;
+    \item \textbf{Consumo estático}: em temperaturas altas ($\approx$\SI{85}{\degreeCelsius}), o efeito de vazamento de \textit{junction currents} deixa de ser desprezível, aumentando por um fator 60 em relação à vazamentos em temperaturas ambiente normais;
+    \item \textbf{Curto circuito em transientes}: em condições de transiente\footnote{ou seja, durante o switch de um transistor.}, existe um pico de corrente de curto circuito, dissipando, assim, energia não desprezível;
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
